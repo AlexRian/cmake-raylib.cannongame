@@ -7,7 +7,7 @@
 
 int main(void)
 {
-    InitWindow(Settings::screenWidth, Settings::screenHeight, "Game");
+    InitWindow(Settings::screenWidth, Settings::screenHeight, "Cannon Game");
     SetTargetFPS(Settings::fps);
 
     Debug debug{ 0, 0, false };
@@ -18,20 +18,25 @@ int main(void)
 
     Ground ground{
         Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60,
-        physics.getBody<b2PolygonShape>(Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60, false, {0.1f, 0.1f, 0.1f})
+        physics.getBody(Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60, false, BodyType::Box, {0.1f, 0.1f, 0.1f})
     };
 
     CannonBall cannonBall{
         100, Settings::screenHeight - 200, 90, 30, 30,
-        physics.getBody<b2CircleShape>(100, Settings::screenHeight - 200, 90, 30, 30, false, {0.1f, 0.1f, 0.1f})
+        physics.getBody(100, Settings::screenHeight - 200, 90, 30, 30, false, BodyType::Circle, {0.2f, 0.5f, 1.0f})
     };
 
     while (!WindowShouldClose())
     {
+        if (IsKeyPressed(KEY_SPACE)) {
+            cannonBall.switchDynamicState();
+            cannonBall.applyForce(b2Vec2{300, -60});
+        }
 
         physics.makeWorldStep();
 
         gameLogic.applyPhysicsPositions();
+        ground.applyPhysicsPosition();
         cannonBall.applyPhysicsPosition();
 
         BeginDrawing();

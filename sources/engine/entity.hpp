@@ -14,7 +14,7 @@ public:
 	Entity() 
 		: m_position(Vector2{ 0,0 }), m_angle(180) {};
 	Entity(int positionX, int positionY, float angle)
-		:m_position{ Vector2{ (float)positionX, (float)positionY } }, m_angle{ angle  } {};
+		:m_position{ Vector2{ (float)positionX, (float)positionY } }, m_angle{ angle } {};
 	Entity(int positionX, int positionY, float angle, int width, int height)
 		:m_position{ Vector2{ (float)positionX, (float)positionY } }, m_angle{ angle }, m_width(width), m_height(height) {};
 	virtual void draw() {};

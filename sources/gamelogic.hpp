@@ -22,7 +22,7 @@ public:
 
 			Wall* wall = new Wall(
 				entityData.x, entityData.y, entityData.angle, entityData.width, entityData.height,
-				m_physics->getBody<b2PolygonShape>(entityData.x, entityData.y, entityData.angle, entityData.width, entityData.height, true, {.5f, 0.3f, 0})
+				m_physics->getBody(entityData.x, entityData.y, entityData.angle, entityData.width, entityData.height, true, BodyType::Box, {.2f, 0.3f, 0.5f})
 			);
 
 			m_stageEntities.push_back(wall);

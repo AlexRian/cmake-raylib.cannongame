@@ -9,6 +9,11 @@
 
 extern const float SCALE = 30.f;
 
+enum BodyType {
+    Box,
+    Circle,
+};
+
 struct BodyOptions
 {
     BodyOptions(float desnity, float friction, float restitution) :density(desnity), friction(friction), restitution(restitution){}
@@ -31,14 +36,14 @@ public:
         m_world.Step(1 / 60.f, 16, 6);
     }
 
-    template <typename T>
     b2Body* getBody(
-        int positionX, 
+        int positionX,
         int positionY,
-        float angle, 
-        int width, 
-        int height, 
+        float angle,
+        int width,
+        int height,
         bool dynamic,
+        BodyType type,
         BodyOptions options
     ) {
         b2BodyDef BodyDef;
@@ -52,13 +57,19 @@ public:
         FixtureDef.friction = options.friction;
         FixtureDef.restitution = options.restitution;
 
-        b2PolygonShape shape;
-        shape.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE);
+        b2PolygonShape polygon;
+        b2CircleShape circle;
 
-        FixtureDef.shape = &shape;
+        if (type == BodyType::Box) {
+            polygon.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE);
+            FixtureDef.shape = &polygon;
+        }
+        else {
+            circle.m_radius = (width / 2) / SCALE;
+            FixtureDef.shape = &circle;
+        }
 
         Body->CreateFixture(&FixtureDef);
-        
         return Body;
     }
     b2World* getWorld() {
@@ -86,6 +97,10 @@ public:
 
     float getBodyAngle() {
         return m_body->GetAngle() * 180 / b2_pi;
+    }
+
+    void switchDynamicState() {
+        m_body->GetType() == b2_dynamicBody ? m_body->SetType(b2_staticBody) : m_body->SetType(b2_dynamicBody);
     }
 
     void applyForce(b2Vec2 directionVector) {
