@@ -1,21 +1,14 @@
+#pragma once
 #include "./engine/entity.hpp"
 #include "./engine/physics.hpp"
+#include "./engine/settings.hpp"
 
-class Shape : public Entity {
-    using Entity::Entity;
-public:
-    void draw() {
-        Rectangle rec = { m_position.x, m_position.y, 120, 60 };
-        DrawRectanglePro(rec, { 60, 30 }, m_angle, RED);
-    }
-};
-
-class Box : public PhysicsEntity {
+class Wall : public PhysicsEntity {
     using PhysicsEntity::PhysicsEntity;
 public:
     void draw() {
-        Rectangle rec = { m_position.x, m_position.y, 200, 120 };
-        DrawRectanglePro(rec, { 100, 60 }, getBodyAngle(), RED);
+        Rectangle rec = { m_position.x, m_position.y, m_width, m_height};
+        DrawRectanglePro(rec, { float(m_width / 2), float(m_height / 2) }, getBodyAngle(), RED);
     }
 };
 
@@ -23,7 +16,15 @@ class Ground : public PhysicsEntity {
     using PhysicsEntity::PhysicsEntity;
 public:
     void draw() {
-        Rectangle rec = { m_position.x, m_position.y, Settings::screenWidth, 60 };
-        DrawRectanglePro(rec, { Settings::screenWidth / 2, 30 }, getBodyAngle(), BLACK);
+        Rectangle rec = { m_position.x, m_position.y, m_width, m_height };
+        DrawRectanglePro(rec, { float(m_width / 2), float(m_height / 2) }, getBodyAngle(), BLACK);
+    }
+};
+
+class CannonBall : public PhysicsEntity {
+    using PhysicsEntity::PhysicsEntity;
+public:
+    void draw() {
+        DrawCircle(m_position.x, m_position.y, m_width, BLACK);
     }
 };

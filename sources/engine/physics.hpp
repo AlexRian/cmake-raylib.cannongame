@@ -1,18 +1,21 @@
 #pragma once
 #include <stdio.h>
+#include <iostream>
+#include <string>
+#include <memory>
 #include <Box2D/Box2D.h>
 #include "settings.hpp"
 #include "entity.hpp"
 
+extern const float SCALE = 30.f;
+
 struct BodyOptions
 {
-    BodyOptions(float desnity, float friction, float restitution) :density(desnity), friction(friction), restitution(restitution) {}
+    BodyOptions(float desnity, float friction, float restitution) :density(desnity), friction(friction), restitution(restitution){}
     float density;
     float friction;
     float restitution;
 };
-
-extern const float SCALE = 30.f;
 
 class Physics {
 private:
@@ -27,6 +30,8 @@ public:
     void makeWorldStep() {
         m_world.Step(1 / 60.f, 16, 6);
     }
+
+    template <typename T>
     b2Body* getBody(
         int positionX, 
         int positionY,
@@ -42,16 +47,18 @@ public:
         BodyDef.angle = angle * b2_pi / 180.0f;
         b2Body* Body = m_world.CreateBody(&BodyDef);
 
-        b2PolygonShape shape;
-        shape.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE);
-        
         b2FixtureDef FixtureDef;
         FixtureDef.density = options.density;
         FixtureDef.friction = options.friction;
         FixtureDef.restitution = options.restitution;
+
+        b2PolygonShape shape;
+        shape.SetAsBox((width / 2) / SCALE, (height / 2) / SCALE);
+
         FixtureDef.shape = &shape;
-        
+
         Body->CreateFixture(&FixtureDef);
+        
         return Body;
     }
     b2World* getWorld() {
@@ -69,6 +76,9 @@ protected:
 public:
     PhysicsEntity(int positionX, int positionY, float angle, b2Body* body)
         : Entity(positionX, positionY, angle), m_body{ body } {};
+
+    PhysicsEntity(int positionX, int positionY, float angle, int width, int height, b2Body* body)
+        : Entity(positionX, positionY, angle, width, height), m_body{ body } {};
 
     void applyPhysicsPosition() {
         m_position = Vector2{ (float)m_body->GetPosition().x * SCALE, (float)m_body->GetPosition().y * SCALE };

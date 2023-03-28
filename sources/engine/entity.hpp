@@ -7,12 +7,16 @@ class Entity
 protected:
 	Vector2 m_position;
 	float m_angle;
+	int m_width;
+	int m_height;
 
 public:
 	Entity() 
 		: m_position(Vector2{ 0,0 }), m_angle(180) {};
 	Entity(int positionX, int positionY, float angle)
 		:m_position{ Vector2{ (float)positionX, (float)positionY } }, m_angle{ angle  } {};
+	Entity(int positionX, int positionY, float angle, int width, int height)
+		:m_position{ Vector2{ (float)positionX, (float)positionY } }, m_angle{ angle }, m_width(width), m_height(height) {};
 	virtual void draw() {};
 	Vector2 getPosition() {
 		return m_position;
