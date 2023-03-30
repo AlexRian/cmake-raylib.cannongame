@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <functional>
 #include <Box2D/Box2D.h>
 #include "settings.hpp"
 #include "entity.hpp"
@@ -27,16 +28,35 @@ private:
 	b2Vec2 m_gravity;
 	b2World m_world;
     std::vector<b2Body*> m_bodies;
-
+    bool m_active = true;
+    std::vector<std::function<void()>> m_postActions;
 public:
     Physics(b2Vec2 gravity = b2Vec2({0,0}))
         :m_gravity{ gravity }, m_world{ gravity } {};
 
     void makeWorldStep() {
-        m_world.Step(1 / 60.f, 16, 6);
+        if (m_active) {
+            m_world.Step(1 / 60.f, 16, 6);
+        }
+    }
+
+    void addPostAction(std::function<void()> func) {
+        m_postActions.push_back(func);
+    }
+
+    void applyActions() {
+        for (const auto& func : m_postActions) {
+            func();
+        }
+        m_postActions.clear();
+    }
+
+    void switchActiveState() {
+        m_active = !m_active;
     }
 
     b2Body* getBody(
+        char* name,
         int positionX,
         int positionY,
         float angle,
@@ -49,7 +69,8 @@ public:
         b2BodyDef BodyDef;
         BodyDef.position = b2Vec2(positionX / SCALE, positionY / SCALE);
         BodyDef.type = dynamic ? b2_dynamicBody : b2_staticBody;
-        BodyDef.angle = angle * b2_pi / 180.0f;
+        BodyDef.angle = angle * b2_pi / 180.0f; \
+        BodyDef.userData.pointer = reinterpret_cast<uintptr_t>(new std::string(name));
         b2Body* Body = m_world.CreateBody(&BodyDef);
 
         b2FixtureDef FixtureDef;
@@ -97,6 +118,10 @@ public:
 
     float getBodyAngle() {
         return m_body->GetAngle() * 180 / b2_pi;
+    }
+
+    b2Vec2 getBodyVelocty() {
+        return m_body->GetLinearVelocity();
     }
 
     void switchDynamicState() {

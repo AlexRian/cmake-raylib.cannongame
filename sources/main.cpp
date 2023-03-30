@@ -15,39 +15,38 @@ int main(void)
 
     Gamelogic gameLogic(&physics);
     gameLogic.generateStage();
+    gameLogic.createCannonBall();
 
     Ground ground{
         Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60,
-        physics.getBody(Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60, false, BodyType::Box, {0.1f, 0.1f, 0.1f})
-    };
-
-    CannonBall cannonBall{
-        100, Settings::screenHeight - 200, 90, 30, 30,
-        physics.getBody(100, Settings::screenHeight - 200, 90, 30, 30, false, BodyType::Circle, {0.2f, 0.5f, 1.0f})
+        physics.getBody("Ground", Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60, false, BodyType::Box, {0.1f, 0.1f, 0.1f})
     };
 
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_SPACE)) {
-            cannonBall.switchDynamicState();
-            cannonBall.applyForce(b2Vec2{300, -60});
+            gameLogic.playCannonBall();
         }
 
         physics.makeWorldStep();
 
         gameLogic.applyPhysicsPositions();
         ground.applyPhysicsPosition();
-        cannonBall.applyPhysicsPosition();
+        gameLogic.applyCannonBallPhysicsPosition();
+
+        gameLogic.checkCannonBallPosiiton();
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
             gameLogic.drawStage();
             
-            cannonBall.draw();
+            gameLogic.drawCannonBall();
             ground.draw();
             debug.draw();
         EndDrawing();
+
+        physics.applyActions();
     }
 
     CloseWindow();
