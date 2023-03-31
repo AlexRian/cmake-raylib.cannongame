@@ -69,7 +69,7 @@ public:
         b2BodyDef BodyDef;
         BodyDef.position = b2Vec2(positionX / SCALE, positionY / SCALE);
         BodyDef.type = dynamic ? b2_dynamicBody : b2_staticBody;
-        BodyDef.angle = angle * b2_pi / 180.0f; \
+        BodyDef.angle = angle * b2_pi / 180.0f;
         BodyDef.userData.pointer = reinterpret_cast<uintptr_t>(new std::string(name));
         b2Body* Body = m_world.CreateBody(&BodyDef);
 
