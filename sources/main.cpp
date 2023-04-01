@@ -24,20 +24,29 @@ int main(void)
     gameLogic.createCannonBall();
 
     Ground ground{
-        Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60,
-        physics.getBody("Ground", Settings::screenWidth / 2, Settings::screenHeight, 180, Settings::screenWidth, 60, false, BodyType::Box, {0.1f, 0.1f, 0.1f})
+        0, Settings::screenHeight, 180, 8000, 60,
+        physics.getBody("Ground", 0, Settings::screenHeight, 180, 8000, 60, false, BodyType::Box, {0.1f, 0.1f, 0.1f})
     };
 
     Camera2D camera = { 0 };
     camera.target = gameLogic.getCannonBall()->getPosition();
-    camera.offset = Vector2{ Settings::screenWidth / 2, Settings::screenHeight / 2 };
+    camera.offset = Vector2{ Settings::screenWidth / 4, Settings::screenHeight / 2 };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_SPACE)) {
-            gameLogic.playCannonBall();
+            gameLogic.switchPlayState();
+        }
+
+        if (IsKeyDown(KEY_Z)) {
+            camera.zoom = 0.5f;
+            camera.offset = Vector2{ Settings::screenWidth / 4, Settings::screenHeight / 2 + 170};
+        }
+        else {
+            camera.offset = Vector2{ Settings::screenWidth / 4, Settings::screenHeight / 2 };
+            camera.zoom = 1.0f;
         }
 
         physics.makeWorldStep();
@@ -48,15 +57,16 @@ int main(void)
 
         gameLogic.checkCannonBallPosiiton();
 
-        camera.target = gameLogic.getCannonBall()->getPosition();
+        camera.target = Vector2{ gameLogic.getCannonBall()->getPosition().x + Settings::screenWidth / 8, Settings::screenHeight / 2 };
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
             BeginMode2D(camera);
                 gameLogic.drawStage();
-
                 gameLogic.drawCannonBall();
+                gameLogic.drawIndicators();
+
                 ground.draw();
                 debug.draw();
             EndMode2D();

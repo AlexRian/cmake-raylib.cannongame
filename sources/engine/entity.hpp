@@ -24,4 +24,11 @@ public:
 	void setPosition(Vector2 position) {
 		m_position = position;
 	};
+	void setSize(Vector2 size) {
+		m_width = size.x;
+		m_height = size.y;
+	}
+	Vector2 getSize() {
+		return Vector2{ (float)m_width, (float)m_height };
+	}
 };

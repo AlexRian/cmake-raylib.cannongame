@@ -28,3 +28,21 @@ public:
         DrawCircle(m_position.x, m_position.y, m_width, BLACK);
     }
 };
+
+class ForceIndicator : public Entity {
+    using Entity::Entity;
+public:
+    void draw() {
+        Rectangle rec = { m_position.x, m_position.y, m_width, m_height };
+        DrawRectanglePro(rec, { 0, float(m_height / 2) }, 0, RED);
+    }
+};
+
+class AngleIndicator : public Entity {
+    using Entity::Entity;
+public:
+    void draw() {
+        Rectangle rec = { m_position.x, m_position.y, m_width, m_height };
+        DrawRectanglePro(rec, { float(m_width / 2), 0 }, 180, BLUE);
+    }
+};
