@@ -85,11 +85,19 @@ public:
 		std::string bodyBId = *reinterpret_cast<std::string*>(bodyB->GetUserData().pointer);
 
 
-		//if (bodyAId == "Wall" && bodyBId == "CannonBall") {
-		//	m_physics->addPostAction([this]() {
-		//		m_cannonBall->switchDynamicState();
-		//	});
-		//}
+		if (bodyAId == "Wall" && bodyBId == "Enemy") {
+			if (bodyA->GetLinearVelocity().y < 0) {
+				for (size_t i = 0; i < m_stageEntities.size(); i++) {
+					if (m_stageEntities[i]->getBody() == bodyB) {
+						m_physics->addPostAction([this, i]() {
+							m_physics->getWorld()->DestroyBody(m_stageEntities[i]->getBody());
+							delete m_stageEntities[i];
+							m_stageEntities.erase(m_stageEntities.begin() + i);
+						});
+					}
+				}
+			}
+		}
 	}
 	
 	void generateStage() {
@@ -105,6 +113,13 @@ public:
 
 			m_stageEntities.push_back(wall);
 		}
+
+		Enemy* enemy = new Enemy(
+			Settings::screenWidth / 2 + 1100, Settings::screenHeight / 2, 0, 25, 25,
+			m_physics->getBody("Enemy", Settings::screenWidth / 2 + 1000, Settings::screenHeight / 2 - 400, 0, 25, 25, true, BodyType::Box, { .2f, 0.3f, 0.5f })
+		);
+
+		m_stageEntities.push_back(enemy);
 	};
 
 	void createCannonBall() {

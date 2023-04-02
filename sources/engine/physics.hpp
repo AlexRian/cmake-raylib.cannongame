@@ -124,6 +124,10 @@ public:
         return m_body->GetLinearVelocity();
     }
 
+    b2Body* getBody() {
+        return m_body;
+    }
+
     void switchDynamicState() {
         m_body->GetType() == b2_dynamicBody ? m_body->SetType(b2_staticBody) : m_body->SetType(b2_dynamicBody);
     }

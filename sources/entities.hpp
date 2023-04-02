@@ -29,6 +29,14 @@ public:
     }
 };
 
+class Enemy : public PhysicsEntity {
+    using PhysicsEntity::PhysicsEntity;
+public:
+    void draw() {
+        DrawCircle(m_position.x, m_position.y, m_width, BLACK);
+    }
+};
+
 class ForceIndicator : public Entity {
     using Entity::Entity;
 public:
